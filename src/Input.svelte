@@ -1,39 +1,54 @@
 <script>
+    import Movie from "./Movie.svelte";
+
     let value = "";
     let response = [];
-    console.log(response);
 
     const handleInput = (event) => {
         value = event.target.value;
     };
 
     $: if (value.length > 2) {
-        fetch(
+        response = fetch(
             `http://www.omdbapi.com/?apikey=${__myapp.env.API_CLIENT_KEY}&s=${value}`
         )
+            //  .then((res) => !res.ok() && new Error("Oops...something is wrong"))
             .then((res) => res.json())
-            .then((apiResponse) => (response = apiResponse.Search));
+            .then((apiResponse) => apiResponse.Search || []);
     }
 </script>
 
 <style>
-    ul,
-    li {
-        list-style: none;
+    section {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 16px;
+        margin-top: 6px;
+    }
+    span {
+        text-align: left;
     }
     div {
         width: 200px;
         display: flex;
+        flex-direction: column;
         margin: 0 auto;
         text-align: left;
     }
 </style>
 
-<input {value} on:input={handleInput} />
 <div>
-    <ul>
-        {#each response as film}
-            <li>{film.Title}</li>
-        {/each}
-    </ul>
+    <input placeholder="Search movies ..." {value} on:input={handleInput} />
 </div>
+
+{#await response}
+    <span>Loading...</span>
+{:then movies}
+    <section>
+        {#each movies as { Title, Poster, Year }, index}
+            <Movie {index} title={Title} poster={Poster} year={Year} />
+        {:else}<span>No results ...</span>{/each}
+    </section>
+{:catch error}
+    <span>❌ {error}</span>
+{/await}

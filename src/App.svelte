@@ -1,6 +1,5 @@
 <script>
 	import Input from "./Input.svelte";
-	export let name;
 </script>
 
 <style>
@@ -26,11 +25,6 @@
 </style>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>
-		Visit the
-		<a href="https://svelte.dev/tutorial">Svelte tutorial</a>
-		to learn how to build Svelte apps.
-	</p>
+	<h1>Search Movies 🍿</h1>
 	<Input />
 </main>
